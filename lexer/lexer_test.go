@@ -7,15 +7,35 @@ import (
 )
 
 func TestNextToken(t *testing.T) {
-	input := `let five = 5;
-	let ten = 10;
+	input := `
+	// single line comment	
 	
+	//
+	let five = 5; // comment after statement
+	let ten = 10;
+
+	/* 
+	multi 
+	line
+	comment
+	*/
+
+	/* mulitline on same line */
+
+	/*
+	*
+	* multiline with starts and slashes /
+	*
+	*/
+
+	// comment after multiline
+
 	let add = fn(x, y) {
 		x + y;
-	};
+	}; /* multiline after statement */
 
 	let result = add(five, ten);
-	!-/*5;
+	!-*/5;
 	5 < 10 > 5;
 
 	if (5 < 10) {
@@ -70,8 +90,8 @@ func TestNextToken(t *testing.T) {
 		{token.SEMICOLON, ";"},
 		{token.BANG, "!"},
 		{token.MINUS, "-"},
-		{token.SLASH, "/"},
 		{token.ASTERISK, "*"},
+		{token.SLASH, "/"},
 		{token.INT, "5"},
 		{token.SEMICOLON, ";"},
 		{token.INT, "5"},
@@ -113,10 +133,10 @@ func TestNextToken(t *testing.T) {
 		tok := l.NextToken()
 
 		if tok.Type != tt.expectedType {
-			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q", i, tt.expectedType, tok.Type)
+			t.Fatalf("tests[%d] - tokentype wrong. expected=%q, got=%q\n%q at char %d - %s", i, tt.expectedType, tok.Type, string(l.ch), l.position, l.input[l.readPosition:])
 		}
 		if tok.Literal != tt.expectedLiteral {
-			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q", i, tt.expectedLiteral, tok.Literal)
+			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q\n%q at char %d - %s", i, tt.expectedLiteral, tok.Literal, string(l.ch), l.position, l.input[l.readPosition:])
 		}
 	}
 }

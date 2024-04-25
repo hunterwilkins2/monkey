@@ -1,6 +1,8 @@
 package lexer
 
-import "github.com/hunterwilkins2/monkey/token"
+import (
+	"github.com/hunterwilkins2/monkey/token"
+)
 
 type Lexer struct {
 	input string
@@ -31,7 +33,20 @@ func (l *Lexer) readChar() {
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 
-	l.skipWhitespace()
+	for isWhitespace(l.ch) || l.ch == '/' || l.ch == 0 {
+		if isWhitespace(l.ch) {
+			l.skipWhitespace()
+		} else if l.ch == '/' && l.peekChar() == '/' {
+			l.skipSingleLineComment()
+		} else if l.ch == '/' && l.peekChar() == '*' {
+			l.skipMultiLineComment()
+		} else if l.ch == 0 {
+			return token.Token{Type: token.EOF, Literal: ""}
+		} else {
+			break
+		}
+	}
+
 	switch l.ch {
 	case '=':
 		if l.peekChar() == '=' {
@@ -112,10 +127,28 @@ func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
+func isWhitespace(ch byte) bool {
+	return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r'
+}
+
 func (l *Lexer) skipWhitespace() {
-	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+	for isWhitespace(l.ch) {
 		l.readChar()
 	}
+}
+
+func (l *Lexer) skipSingleLineComment() {
+	for l.ch != '\n' && l.ch != 0 {
+		l.readChar()
+	}
+}
+
+func (l *Lexer) skipMultiLineComment() {
+	for !(l.ch == '*' && l.peekChar() == '/') && l.ch != 0 {
+		l.readChar()
+	}
+	l.readChar()
+	l.readChar()
 }
 
 func (l *Lexer) readNumber() string {
