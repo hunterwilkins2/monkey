@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/hunterwilkins2/monkey/evaluator"
 	"github.com/hunterwilkins2/monkey/lexer"
+	"github.com/hunterwilkins2/monkey/object"
 	"github.com/hunterwilkins2/monkey/parser"
 )
 
@@ -13,6 +15,7 @@ const PROMPT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
+	env := object.NewEnvironment()
 	for {
 		fmt.Fprint(out, PROMPT)
 		scanned := scanner.Scan()
@@ -30,8 +33,11 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		evaluated := evaluator.Eval(program, env)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
