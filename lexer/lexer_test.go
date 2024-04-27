@@ -46,6 +46,10 @@ func TestNextToken(t *testing.T) {
 	
 	10 == 10;
 	10 != 9;
+	"foobar"
+	"foo bar"
+	[1, 2];
+	{"foo": "bar"}
 	`
 
 	tests := []struct {
@@ -125,6 +129,19 @@ func TestNextToken(t *testing.T) {
 		{token.NOT_EQ, "!="},
 		{token.INT, "9"},
 		{token.SEMICOLON, ";"},
+		{token.STRING, "foobar"},
+		{token.STRING, "foo bar"},
+		{token.LBRACKET, "["},
+		{token.INT, "1"},
+		{token.COMMA, ","},
+		{token.INT, "2"},
+		{token.RBRACKET, "]"},
+		{token.SEMICOLON, ";"},
+		{token.LBRACE, "{"},
+		{token.STRING, "foo"},
+		{token.COLON, ":"},
+		{token.STRING, "bar"},
+		{token.RBRACE, "}"},
 		{token.EOF, ""},
 	}
 
@@ -139,4 +156,29 @@ func TestNextToken(t *testing.T) {
 			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q\n%q at char %d - %s", i, tt.expectedLiteral, tok.Literal, string(l.ch), l.position, l.input[l.readPosition:])
 		}
 	}
+}
+
+func TestIncompleteFunction(t *testing.T) {
+	tests := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.LET, "let"},
+		{token.IDENT, "x"},
+		{token.ASSIGN, "="},
+		{token.FUNCTION, "fn"},
+	}
+	input := "let x = fn"
+	l := New(input)
+
+	for i, tt := range tests {
+		tok := l.NextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("tests[%d] - tokenType wrong. expected=%q, got=%q\n%q at char %d - %s", i, tt.expectedType, tok.Type, string(l.ch), l.position, l.input[l.readPosition:])
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("tests[%d] - literal wrong. expected=%q, got=%q\n%q at char %d - %s", i, tt.expectedLiteral, tok.Literal, string(l.ch), l.position, l.input[l.readPosition:])
+		}
+	}
+
 }
