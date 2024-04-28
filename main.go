@@ -60,7 +60,7 @@ func main() {
 				os.Exit(1)
 			}
 
-			stackTop := machine.StackTop()
+			stackTop := machine.LastPoppedStackElem()
 			fmt.Println(stackTop.Inspect())
 		}
 	} else {
