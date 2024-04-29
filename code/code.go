@@ -37,6 +37,7 @@ const (
 	OpReturnValue
 	OpGetLocal
 	OpSetLocal
+	OpGetBuiltin
 )
 
 var definitions = map[Opcode]*Definition{
@@ -66,6 +67,7 @@ var definitions = map[Opcode]*Definition{
 	OpReturnValue:   {"OpReturnValue", []int{}},
 	OpGetLocal:      {"OpGetLocal", []int{1}},
 	OpSetLocal:      {"OpSetLocal", []int{1}},
+	OpGetBuiltin:    {"OpGetBuiltin", []int{1}},
 }
 
 func Make(op Opcode, operands ...int) []byte {
