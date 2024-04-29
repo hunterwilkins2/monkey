@@ -1,6 +1,6 @@
 # Monkey Lang
 
-Go implementation of the Monkey Programming language from the book _Writing and Interpreter in Go_. 
+Go implementation of the Monkey Programming language from the books _Writing a Interpreter in Go_ and _Writing a Compiler in Go_. 
 
 ## Requirments
 
@@ -17,13 +17,13 @@ $ go build -o bin/monkey main.go
 ### Running the REPL
 
 ```sh
-$ bin/monkey 
+$ bin/monkey [-interpt]
 ```
 
 ### Parse a file
 
 ```sh
-$ bin/monkey [file_name]
+$ bin/monkey [-interpt] -filename file_name
 ```
 
 ## Example 
@@ -34,7 +34,31 @@ It includes functions to `map`, `filter`, `reduce` and, `search` arrays and map 
 Run this file with:
 
 ```sh
-$ bin/monkey example.monkey
+$ bin/monkey -filename example.monkey
+```
+
+## Benchmark
+
+A benchmark between the interpreter and bytecode compiler shows a 4x in performance of the bytecode compiler vs the interpreter.
+
+### Run benchmark
+
+```sh
+$ go build -o bin/fibonacci ./benchmark
+$ ./bin/fibonacci
+starting interpreter `fibonacci(35);`...
+starting compiler `fibonacci(35);`...
+
+engine=interpreter, result=9227465, duration=8.709372729s
+engine=compiler, result=9227465, duration=2.431848157s
+```
+
+### System Specs
+
+```
+CPU: 13th Gen Intel i7-13700K (24) @ 5.300GHz 
+GPU: AMD ATI Radeon RX 6700/6700 XT/6750 XT / 6800M/6850M XT 
+Memory: 3847MiB / 31863MiB 
 ```
 
 ## Features
